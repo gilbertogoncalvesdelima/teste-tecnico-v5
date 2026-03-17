@@ -1,4 +1,4 @@
-# 🧪 Teste Técnico — React & React Native Sênior v5.0
+# 🧪 Teste Técnico — React & React Native v5.0
 
 > **Formato**: Fork este repo → implemente → abra PR para `main`
 > **Tempo**: 3h (informe horário de início e fim no PR)
@@ -35,7 +35,7 @@
 │   │   │   │   │   └── components/
 │   │   │   │   │       ├── GalleryClient.tsx
 │   │   │   │   │       ├── PriceCalculator.tsx
-│   │   │   │   │       └── ContactForm.tsx      # ← NÃO MEXA (tests verificam)
+│   │   │   │   │       └── ContactForm.tsx      # ← NÃO MEXA
 │   │   │   │   └── components/
 │   │   │   │       ├── PropertyCard.tsx
 │   │   │   │       ├── SearchFilters.tsx  # ← MÓDULO 3
@@ -43,17 +43,17 @@
 │   │   │   └── layout.tsx
 │   │   ├── lib/
 │   │   │   ├── api.ts
-│   │   │   ├── formatters.ts              # ← parece errado, MAS ESTÁ CERTO
+│   │   │   ├── formatters.ts
 │   │   │   └── types.ts
 │   │   └── __tests__/
 │   │       ├── property-card.test.tsx     # 6 passing
 │   │       ├── gallery.test.tsx           # 4 passing
 │   │       ├── price-calculator.test.tsx  # 8 passing
-│   │       ├── search-filters.test.tsx    # 0 tests (VOCÊ ESCREVE)
+│   │       ├── search-filters.test.tsx    # implementado pelo candidato
 │   │       ├── api.test.ts               # 7 passing
-│   │       └── formatters.test.ts         # 6 passing (NÃO QUEBRE)
+│   │       └── formatters.test.ts         # 6 passing
 │   │
-│   └── mobile/                 # React Native (mocks para teste)
+│   └── mobile/                 # React Native
 │       ├── src/
 │       │   ├── screens/
 │       │   │   └── PropertyListScreen.tsx  # ← MÓDULO 4
@@ -67,11 +67,11 @@
 │       │   └── stores/
 │       │       └── propertyStore.ts         
 │       └── __tests__/
-│           ├── setup.ts                    # Mocks globais RN
+│           ├── setup.ts
 │           ├── animated-header.test.tsx    # 3 passing
 │           ├── property-list-item.test.tsx # 3 passing
 │           ├── property-store.test.ts     # 5 passing
-│           ├── sync.test.ts               # 0 tests (VOCÊ ESCREVE)
+│           ├── sync.test.ts               # implementado pelo candidato
 │           └── render-count.test.tsx      # 1 passing
 │
 ├── packages/
@@ -82,11 +82,11 @@
 │       │   └── SyncConflictResolver.ts    # ← MÓDULO 5
 │       └── __tests__/
 │           ├── price-engine.test.ts       # 9 passing
-│           └── conflict-resolver.test.ts  # 0 tests (VOCÊ ESCREVE)
+│           └── conflict-resolver.test.ts  # implementado pelo candidato
 │
-├── DECISIONS.md                # ← VOCÊ PREENCHE (obrigatório)
+├── DECISIONS.md                # ← preenchido pelo candidato (obrigatório)
 ├── vitest.config.ts
-├── vitest.workspace.ts         # Projetos: web (jsdom), mobile (node), shared (node)
+├── vitest.workspace.ts
 ├── package.json
 └── turbo.json
 ```
@@ -101,21 +101,21 @@ $ npm test
  PASS  apps/web/__tests__/property-card.test.tsx        (6 passed)
  PASS  apps/web/__tests__/gallery.test.tsx               (4 passed)
  PASS  apps/web/__tests__/price-calculator.test.tsx       (8 passed)
- PASS  apps/web/__tests__/formatters.test.ts              (6 passed) ← NÃO QUEBRE
+ PASS  apps/web/__tests__/formatters.test.ts              (6 passed)
  PASS  apps/web/__tests__/api.test.ts                     (7 passed)
- SKIP  apps/web/__tests__/search-filters.test.tsx          (0 tests — VOCÊ ESCREVE)
+ SKIP  apps/web/__tests__/search-filters.test.tsx          (implementado pelo candidato)
  PASS  apps/mobile/__tests__/animated-header.test.tsx      (3 passed)
  PASS  apps/mobile/__tests__/property-list-item.test.tsx   (3 passed)
  PASS  apps/mobile/__tests__/property-store.test.ts        (5 passed)
  PASS  apps/mobile/__tests__/render-count.test.tsx          (1 passed)
- SKIP  apps/mobile/__tests__/sync.test.ts                  (0 tests — VOCÊ ESCREVE)
+ SKIP  apps/mobile/__tests__/sync.test.ts                  (implementado pelo candidato)
  PASS  packages/shared/__tests__/price-engine.test.ts       (9 passed)
- SKIP  packages/shared/__tests__/conflict-resolver.test.ts  (0 tests — VOCÊ ESCREVE)
+ SKIP  packages/shared/__tests__/conflict-resolver.test.ts  (implementado pelo candidato)
 
 Tests:  0 failed, 52 passed, 3 skipped
 ```
 
-> Os 3 *skipped* são os arquivos de teste vazios dos módulos que VOCÊ implementa (search-filters, sync, conflict-resolver).
+> Os 3 *skipped* são os arquivos de teste vazios dos módulos que o candidato implementa (search-filters, sync, conflict-resolver).
 
 **Sua meta**: manter os 52 existentes passando + escrever os novos testes dos 3 módulos vazios
 
@@ -125,36 +125,17 @@ Tests:  0 failed, 52 passed, 3 skipped
 
 > Leia o código antes de mexer. Todos os 52 testes passam — **não quebre nenhum**.
 
-### O que NÃO mexer
+### Restrições
 
-#### 🪤 ARMADILHA: `formatters.ts`
+- `apps/web/lib/formatters.ts` faz parte do baseline e não deve ser alterado.
+- `apps/web/app/imoveis/[slug]/components/ContactForm.tsx` não deve ser alterado.
+- `apps/web/app/imoveis/components/MapView.tsx` não deve ser alterado.
+- `apps/mobile/src/components/FavoriteButton.tsx` não deve ser alterado.
 
-O arquivo `lib/formatters.ts` tem um trecho que **parece** errado:
+### Observação importante
 
-```typescript
-// lib/formatters.ts
-export function formatArea(meters: number): string {
-  // Parece bug: por que não usar toLocaleString?
-  const formatted = Math.round(meters).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `${formatted} m²`;
-}
-
-export function formatPrice(cents: number): string {
-  // Parece bug: por que dividir por 100 e não usar Intl?
-  const reais = cents / 100;
-  const parts = reais.toFixed(2).split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `R$ ${parts.join(",")}`;
-}
-```
-
-**Não mexa nesse arquivo.** Ele está correto e 6 testes dependem dele. Parece feio, mas lida com edge cases que `Intl.NumberFormat` não cobre neste contexto (valores em centavos vindos da API legada). Se você "melhorar" esse código, os testes vão quebrar.
-
-#### 🔗 Arquitetura Cross-File: `PriceEngine.ts` ↔ `PriceCalculator.tsx` ↔ `api.ts`
-
-A API legada retorna o preço em formato diferente para imóveis de luxo (centavos vs reais). O campo `priceInReais` indica qual formato. A função `normalizePriceToCents` no `PriceEngine.ts` lida com essa conversão. Entenda esse fluxo antes de criar novos componentes que lidam com preço.
-
-> **Por que isso importa**: Seus novos testes e componentes precisam respeitar essa arquitetura. Não assuma que `price` está sempre em centavos.
+Alguns fluxos dependem de código compartilhado entre `apps/web/` e `packages/shared/`.
+Antes de implementar novos componentes ou testes, entenda como os dados trafegam entre API, domínio e UI.
 
 ---
 
@@ -182,8 +163,6 @@ Refatore para que:
 - O formulário de contato (`ContactForm.tsx`) NÃO seja alterado
 
 No arquivo `DECISIONS.md`, responda em **máximo 3 linhas**: por que você desenhou a boundary server/client nesse ponto e não em outro?
-
-> **Como verificamos**: code review manual da PR. Não há teste automatizado para esta separação.
 
 ---
 
@@ -328,7 +307,7 @@ Crie este arquivo na raiz do repo com o seguinte formato. Respostas **curtas e o
 [Sua resposta aqui — por que a boundary está onde está?]
 
 ## 2. Próximos passos de performance RN (máx 5 linhas)
-[Sua resposta aqui — o que faria ALÉM do que já corrigiu?]
+[Sua resposta aqui — o que faria ALÉM do que já existe no código?]
 
 ## 3. Trade-off do Sync (máx 5 linhas)
 A resolução de conflito que implementei tem uma fraqueza: [descreva].
@@ -368,4 +347,3 @@ Porque: [justifique — custo vs benefício].
 | 4 — Performance RN | 15% | Render count ≤ 2, memoização correta, Reanimated correto |
 | 5 — Sync Offline | 30% | Queue robusta, conflict resolver com TODAS as regras, testes |
 
-### Boa sorte! 🚀
