@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@repo/shared/*": ["../../packages/shared/*"]
+      "@repo/shared/*": ["../../packages/shared/*"],
+      "@repo/web/*": ["../../apps/web/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

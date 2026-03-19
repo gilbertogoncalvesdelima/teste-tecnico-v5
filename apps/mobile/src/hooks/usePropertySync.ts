@@ -32,11 +32,12 @@ export function usePropertySync() {
       });
 
       if (!result.success && result.serverVersion) {
-        // Conflito detectado — resolver
         const localProperty = usePropertyStore.getState().properties[op.entityId];
-        if (localProperty && result.serverVersion) {
-          // TODO: Candidato implementa a resolução usando resolveConflict()
-          // e aplica o resultado via updateProperty()
+        if (localProperty) {
+          const baseVersion = (op.payload as { baseVersion?: Property })?.baseVersion ?? localProperty;
+          const { resolved } = resolveConflict(localProperty, result.serverVersion, baseVersion);
+          updateProperty(op.entityId, resolved);
+          return;
         }
       }
 
