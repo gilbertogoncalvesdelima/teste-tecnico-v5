@@ -33,4 +33,5 @@ export interface PropertySummary {
   suites: number;
   photos: string[]; // só primeiras 3
   status: Property["status"];
+  updatedAt?: number;
 }

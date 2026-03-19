@@ -8,38 +8,64 @@ export interface ConflictResult {
   resolved: Property;
   strategy: ConflictStrategy;
   requiresReview: boolean;
-  /** Campos que foram modificados em ambos os lados */
   conflictingFields: string[];
 }
 
-/**
- * Resolve conflitos de sincronização entre versão local e do servidor.
- *
- * Regras de negócio:
- * 1. Se apenas `status` mudou → SERVER_WINS (backoffice controla status)
- * 2. Se apenas `notes` ou `photos` mudaram → LOCAL_WINS (corretor em campo)
- * 3. Se `price` mudou nos dois lados → SERVER_WINS (proprietário define preço)
- * 4. Se campos DIFERENTES mudaram em cada lado → MERGED (sem conflito real)
- * 5. Se mesmo campo (exceto status/price) mudou nos dois → LOCAL_WINS + requiresReview=true
- *
- * @param local   - versão do dispositivo do corretor
- * @param server  - versão vinda do backend
- * @param base    - última versão sincronizada (ancestral comum)
- */
+const PROPERTY_KEYS: (keyof Property)[] = [
+  "id", "slug", "title", "description", "neighborhood", "price", "priceInReais",
+  "area", "bedrooms", "suites", "parkingSpots", "status", "notes", "photos",
+  "amenities", "updatedAt", "updatedBy",
+];
+
+function eq(a: unknown, b: unknown): boolean {
+  if (Array.isArray(a) && Array.isArray(b)) return JSON.stringify(a) === JSON.stringify(b);
+  return a === b;
+}
+
+export function getChangedFields(a: Property, b: Property): (keyof Property)[] {
+  return PROPERTY_KEYS.filter((key) => !eq(a[key], b[key]));
+}
+
 export function resolveConflict(
   local: Property,
   server: Property,
   base: Property
 ): ConflictResult {
-  // TODO: Candidato deve implementar
-  throw new Error("Not implemented");
-}
+  const localChanged = getChangedFields(base, local);
+  const serverChanged = getChangedFields(base, server);
+  const allChanged = [...new Set([...localChanged, ...serverChanged])];
+  const commonChanged = localChanged.filter((k) => serverChanged.includes(k));
 
-/**
- * Detecta quais campos mudaram entre duas versões de uma Property.
- * Retorna array de nomes de campos que diferem.
- */
-export function getChangedFields(a: Property, b: Property): (keyof Property)[] {
-  // TODO: Candidato deve implementar
-  throw new Error("Not implemented");
+  if (localChanged.includes("price") && serverChanged.includes("price")) {
+    return { resolved: server, strategy: "SERVER_WINS", requiresReview: false, conflictingFields: ["price"] };
+  }
+
+  if (allChanged.length === 1 && allChanged[0] === "status") {
+    return { resolved: server, strategy: "SERVER_WINS", requiresReview: false, conflictingFields: ["status"] };
+  }
+
+  const onlyNotesOrPhotos = allChanged.every((k) => k === "notes" || k === "photos");
+  if (onlyNotesOrPhotos) {
+    return { resolved: local, strategy: "LOCAL_WINS", requiresReview: false, conflictingFields: allChanged };
+  }
+
+  const sameFieldConflict = commonChanged.filter((k) => k !== "status" && k !== "price");
+  if (sameFieldConflict.length > 0) {
+    return {
+      resolved: local,
+      strategy: "LOCAL_WINS",
+      requiresReview: true,
+      conflictingFields: sameFieldConflict,
+    };
+  }
+
+  if (commonChanged.length === 0) {
+    const merged = { ...server } as Property;
+    for (const key of localChanged) {
+      (merged as unknown as Record<string, unknown>)[key] = local[key];
+    }
+    return { resolved: merged, strategy: "MERGED", requiresReview: false, conflictingFields: [] };
+  }
+
+  return { resolved: server, strategy: "SERVER_WINS", requiresReview: false, conflictingFields: commonChanged };
 }
