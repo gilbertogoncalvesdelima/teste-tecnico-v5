@@ -9,20 +9,30 @@ interface GalleryClientProps {
   title: string;
 }
 
-/**
- * ⚠️ BUGS:
- * 1. useEffect com dependência faltando (photos) — se photos mudar, não atualiza
- * 2. Não trata array vazio (crash no acesso a index 0)
- * 3. Preloads TODAS as imagens de uma vez, destruindo performance
- * 4. Estado do index pode ficar inválido se photos mudar com menos itens
- * 5. Keyboard navigation não funciona (onKeyDown no div sem tabIndex)
- */
+const arrowBtnBase = {
+  position: "absolute" as const,
+  top: "50%",
+  transform: "translateY(-50%)",
+  width: 48,
+  height: 48,
+  borderRadius: "50%",
+  border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "rgba(255,255,255,0.95)",
+  color: "#1a1a1a",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+  transition: "background 0.2s, box-shadow 0.2s",
+};
+
 export function GalleryClient({ photos, title }: GalleryClientProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
-  // BUG 1: Preload de TODAS as imagens de uma vez
   useEffect(() => {
+    setCurrentIndex(0);
     photos.forEach((src, i) => {
       const img = new window.Image();
       img.onload = () => {
@@ -55,55 +65,52 @@ export function GalleryClient({ photos, title }: GalleryClientProps) {
           priority={currentIndex === 0}
         />
 
-        {/* Navigation buttons */}
         <button
+          type="button"
           onClick={goPrev}
-          style={{
-            position: "absolute",
-            left: 12,
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "rgba(0,0,0,0.5)",
-            color: "#fff",
-            border: "none",
-            borderRadius: "50%",
-            width: 40,
-            height: 40,
-            cursor: "pointer",
-          }}
           aria-label="Foto anterior"
+          style={{ ...arrowBtnBase, left: 16 }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#fff";
+            e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+            e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)";
+          }}
         >
-          ‹
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
         <button
+          type="button"
           onClick={goNext}
-          style={{
-            position: "absolute",
-            right: 12,
-            top: "50%",
-            transform: "translateY(-50%)",
-            background: "rgba(0,0,0,0.5)",
-            color: "#fff",
-            border: "none",
-            borderRadius: "50%",
-            width: 40,
-            height: 40,
-            cursor: "pointer",
-          }}
           aria-label="Próxima foto"
+          style={{ ...arrowBtnBase, right: 16 }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "#fff";
+            e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255,255,255,0.95)";
+            e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.15)";
+          }}
         >
-          ›
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <path d="M9 18l6-6-6-6" />
+          </svg>
         </button>
       </div>
 
-      {/* Thumbnails */}
       <div style={{ display: "flex", gap: 8, marginTop: 12, overflowX: "auto" }}>
         {photos.map((src, i) => (
           <button
             key={i}
+            type="button"
             onClick={() => setCurrentIndex(i)}
             style={{
-              border: i === currentIndex ? "2px solid #0f172a" : "2px solid transparent",
+              border: i === currentIndex ? "2px solid #1a5fb4" : "2px solid transparent",
               borderRadius: 8,
               padding: 0,
               cursor: "pointer",
@@ -122,9 +129,38 @@ export function GalleryClient({ photos, title }: GalleryClientProps) {
         ))}
       </div>
 
-      <p style={{ textAlign: "center", color: "#64748b", marginTop: 8 }}>
-        {currentIndex + 1} / {photos.length}
-      </p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 8,
+          marginTop: 12,
+        }}
+        role="tablist"
+        aria-label="Posição das fotos"
+      >
+        {photos.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            role="tab"
+            aria-selected={i === currentIndex}
+            aria-label={`Foto ${i + 1}`}
+            onClick={() => setCurrentIndex(i)}
+            style={{
+              width: i === currentIndex ? 24 : 8,
+              height: 8,
+              borderRadius: 4,
+              border: "none",
+              padding: 0,
+              cursor: "pointer",
+              background: i === currentIndex ? "#1a5fb4" : "rgba(0,0,0,0.2)",
+              transition: "width 0.2s, background 0.2s",
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

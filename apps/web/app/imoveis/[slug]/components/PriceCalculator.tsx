@@ -46,76 +46,99 @@ export function PriceCalculator({ property }: PriceCalculatorProps) {
   }, [costs.basePrice, downPaymentPct, termYears, annualRate]);
 
   return (
-    <div style={{ padding: 24, border: "1px solid #e2e8f0", borderRadius: 12 }}>
-      <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 16 }}>
+    <div
+      style={{
+        background: "#fff",
+        borderRadius: 16,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+        padding: "28px 32px",
+      }}
+    >
+      <h3 style={{ fontSize: 20, fontWeight: 700, color: "#0f172a", margin: "0 0 24px 0" }}>
         Simulação de Custos
       </h3>
 
-      <div style={{ marginBottom: 16 }}>
-        <label>
-          Entrada: {downPaymentPct}%
-          <input
-            type="range"
-            min={20}
-            max={80}
-            step={5}
-            value={downPaymentPct}
-            onChange={(e) => setDownPaymentPct(Number(e.target.value))}
-            style={{ width: "100%", marginTop: 4 }}
-          />
-        </label>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: "#334155" }}>Entrada</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#1a5fb4" }}>{downPaymentPct}%</span>
+        </div>
+        <input
+          type="range"
+          min={20}
+          max={80}
+          step={5}
+          value={downPaymentPct}
+          onChange={(e) => setDownPaymentPct(Number(e.target.value))}
+          aria-label="Entrada"
+          style={{
+            width: "100%",
+            height: 8,
+            borderRadius: 4,
+            accentColor: "#1a5fb4",
+          }}
+        />
       </div>
 
-      <div style={{ marginBottom: 16 }}>
-        <label>
-          Prazo: {termYears} anos
-          <input
-            type="range"
-            min={5}
-            max={35}
-            step={5}
-            value={termYears}
-            onChange={(e) => setTermYears(Number(e.target.value))}
-            style={{ width: "100%", marginTop: 4 }}
-          />
-        </label>
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+          <span style={{ fontSize: 14, fontWeight: 500, color: "#334155" }}>Prazo</span>
+          <span style={{ fontSize: 14, fontWeight: 600, color: "#1a5fb4" }}>{termYears} anos</span>
+        </div>
+        <input
+          type="range"
+          min={5}
+          max={35}
+          step={5}
+          value={termYears}
+          onChange={(e) => setTermYears(Number(e.target.value))}
+          aria-label="Prazo"
+          style={{
+            width: "100%",
+            height: 8,
+            borderRadius: 4,
+            accentColor: "#1a5fb4",
+          }}
+        />
       </div>
 
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 15 }}>
         <tbody>
           <tr>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9" }}>Valor do imóvel</td>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9", textAlign: "right", fontWeight: 600 }}>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", color: "#64748b" }}>
+              Valor do imóvel
+            </td>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", textAlign: "right", fontWeight: 600, color: "#0f172a" }}>
               {formatPrice(costs.basePrice)}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9" }}>ITBI (3%)</td>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9", textAlign: "right" }}>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", color: "#64748b" }}>ITBI (3%)</td>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", textAlign: "right", color: "#334155" }}>
               {formatPrice(costs.itbi)}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9" }}>Registro</td>
-            <td style={{ padding: 8, borderBottom: "1px solid #f1f5f9", textAlign: "right" }}>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", color: "#64748b" }}>Registro</td>
+            <td style={{ padding: "12px 0", borderBottom: "1px solid #f1f5f9", textAlign: "right", color: "#334155" }}>
               {formatPrice(costs.registryFee)}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0", fontWeight: 600 }}>Total</td>
-            <td style={{ padding: 8, borderBottom: "1px solid #e2e8f0", textAlign: "right", fontWeight: 700, fontSize: 18 }}>
+            <td style={{ padding: "14px 0", borderBottom: "1px solid #e2e8f0", fontWeight: 700, color: "#0f172a" }}>Total</td>
+            <td style={{ padding: "14px 0", borderBottom: "1px solid #e2e8f0", textAlign: "right", fontWeight: 700, fontSize: 18, color: "#0f172a" }}>
               {formatPrice(costs.total)}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: 8 }}>Entrada ({downPaymentPct}%)</td>
-            <td style={{ padding: 8, textAlign: "right" }}>
+            <td style={{ padding: "12px 0", color: "#64748b" }}>Entrada ({downPaymentPct}%)</td>
+            <td style={{ padding: "12px 0", textAlign: "right", fontWeight: 600, color: "#334155" }}>
               {formatPrice(financing.downPayment)}
             </td>
           </tr>
           <tr>
-            <td style={{ padding: 8, fontWeight: 600 }}>Parcela mensal estimada</td>
-            <td style={{ padding: 8, textAlign: "right", fontWeight: 700, color: "#059669" }}>
+            <td style={{ padding: "14px 0", fontWeight: 700, color: "#0f172a" }}>Parcela mensal estimada</td>
+            <td style={{ padding: "14px 0", textAlign: "right", fontWeight: 700, fontSize: 18, color: "#059669" }}>
               {formatPrice(financing.monthlyPayment)}
             </td>
           </tr>

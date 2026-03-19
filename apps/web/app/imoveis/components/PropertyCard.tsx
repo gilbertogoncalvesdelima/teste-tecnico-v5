@@ -24,10 +24,12 @@ export function PropertyCard({ property, onFavorite, isFavorited }: PropertyCard
   return (
     <div
       style={{
+        background: "#fff",
         border: "1px solid #e2e8f0",
-        borderRadius: 12,
+        borderRadius: 8,
         overflow: "hidden",
         transition: "box-shadow 0.2s",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
       }}
     >
       <Link href={`/imoveis/${property.slug}`}>
