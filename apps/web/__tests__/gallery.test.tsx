@@ -30,7 +30,8 @@ describe("GalleryClient", () => {
   // ✅ PASSA
   it("renderiza a primeira foto e counter", () => {
     render(<GalleryClient photos={mockPhotos} title="Casa" />);
-    expect(screen.getByText("1 / 4")).toBeDefined();
+    expect(screen.getByRole("tablist", { name: "Posição das fotos" })).toBeDefined();
+    expect(screen.getByRole("tab", { name: "Foto 1", selected: true })).toBeDefined();
   });
 
   // ❌ FALHA — crash quando photos está vazio
@@ -47,26 +48,23 @@ describe("GalleryClient", () => {
   it("navega para próxima foto com wrap-around", () => {
     render(<GalleryClient photos={mockPhotos} title="Casa" />);
 
-    // Vai até a última foto
     const nextBtn = screen.getByLabelText("Próxima foto");
-    fireEvent.click(nextBtn); // 2/4
-    fireEvent.click(nextBtn); // 3/4
-    fireEvent.click(nextBtn); // 4/4
-
-    expect(screen.getByText("4 / 4")).toBeDefined();
-
-    // Próximo click deve voltar para 1/4 (wrap-around)
     fireEvent.click(nextBtn);
-    expect(screen.getByText("1 / 4")).toBeDefined();
+    fireEvent.click(nextBtn);
+    fireEvent.click(nextBtn);
+
+    expect(screen.getByRole("tab", { name: "Foto 4", selected: true })).toBeDefined();
+
+    fireEvent.click(nextBtn);
+    expect(screen.getByRole("tab", { name: "Foto 1", selected: true })).toBeDefined();
   });
 
   // ❌ FALHA — goPrev vai para -1
   it("navega para foto anterior com wrap-around", () => {
     render(<GalleryClient photos={mockPhotos} title="Casa" />);
 
-    // Estamos em 1/4, ir para anterior deve ir para 4/4
     const prevBtn = screen.getByLabelText("Foto anterior");
     fireEvent.click(prevBtn);
-    expect(screen.getByText("4 / 4")).toBeDefined();
+    expect(screen.getByRole("tab", { name: "Foto 4", selected: true })).toBeDefined();
   });
 });

@@ -119,11 +119,9 @@ describe("PriceCalculator", () => {
     const prop = makeProperty({ price: 1_000_000_00 }); // R$1M padrão
     render(<PriceCalculator property={prop} />);
 
-    // Muda entrada para 50%
     const slider = screen.getByLabelText(/Entrada/);
     fireEvent.change(slider, { target: { value: "50" } });
 
-    // Deve mostrar "Entrada: 50%" no label
-    expect(screen.getByText(/Entrada:\s*50\s*%/)).toBeDefined();
+    expect(screen.getByText("50%")).toBeDefined();
   });
 });
