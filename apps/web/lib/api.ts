@@ -10,13 +10,17 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "https://api.imoveis.example
  * ⚠️ BUG 1: Não passa Content-Type header no POST de filtros complexos.
  * ⚠️ BUG 2: Não trata response.ok — erros 4xx/5xx não lançam exceção.
  */
-export async function fetchProperties(filters?: {
-  neighborhoods?: string[];
-  priceMin?: number;
-  priceMax?: number;
-  suitesMin?: number;
-  areaMin?: number;
-}): Promise<PropertySummary[]> {
+export async function fetchProperties(
+  filters?: {
+    neighborhoods?: string[];
+    priceMin?: number;
+    priceMax?: number;
+    suitesMin?: number;
+    areaMin?: number;
+  },
+  baseUrl?: string
+): Promise<PropertySummary[]> {
+  const base = baseUrl ?? API_BASE;
   const params = new URLSearchParams();
 
   if (filters?.neighborhoods?.length) {
@@ -27,7 +31,7 @@ export async function fetchProperties(filters?: {
   if (filters?.suitesMin) params.set("suites_min", String(filters.suitesMin));
   if (filters?.areaMin) params.set("area_min", String(filters.areaMin));
 
-  const res = await fetch(`${API_BASE}/properties?${params.toString()}`);
+  const res = await fetch(`${base}/properties?${params.toString()}`);
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   const data = await res.json();
   return data;
@@ -40,8 +44,12 @@ export async function fetchProperties(filters?: {
  * mas em REAIS para imóveis >= 5M. O campo priceInReais indica qual formato.
  * Este comportamento é intencional da API (migração incompleta do backend).
  */
-export async function fetchPropertyBySlug(slug: string): Promise<Property | null> {
-  const res = await fetch(`${API_BASE}/properties/${slug}`);
+export async function fetchPropertyBySlug(
+  slug: string,
+  baseUrl?: string
+): Promise<Property | null> {
+  const base = baseUrl ?? API_BASE;
+  const res = await fetch(`${base}/properties/${slug}`);
 
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`API error: ${res.status}`);

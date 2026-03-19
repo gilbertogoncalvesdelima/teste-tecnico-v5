@@ -27,7 +27,7 @@ export default defineWorkspace([
     },
     test: {
       name: "mobile",
-      environment: "node",
+      environment: "jsdom",
       include: ["apps/mobile/__tests__/**/*.test.{ts,tsx}"],
       globals: true,
       setupFiles: ["apps/mobile/__tests__/setup.ts"],
